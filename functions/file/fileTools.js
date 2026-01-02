@@ -42,6 +42,13 @@ export function setCommonHeaders(headers, encodedFileName, fileType, Referer, ur
         headers.set('Content-Type', fileType);
     }
     
+    // 管理端请求（带 ?from=admin）不走 CDN 缓存，避免被 block 的图片被缓存后泄露
+    const isAdminRequest = url.searchParams.get('from') === 'admin';
+    if (isAdminRequest) {
+        headers.set('Cache-Control', 'private, no-store');
+        return;
+    }
+    
     // CDN缓存策略
     if (forcePublicCache) {
         // Discord 渠道：强制 CDN 缓存 30 天，避免重复请求 Discord API 触发 429
