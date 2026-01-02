@@ -42,7 +42,7 @@ export function setCommonHeaders(headers, encodedFileName, fileType, Referer, ur
         headers.set('Content-Type', fileType);
     }
     
-    // 管理端请求（带 ?from=admin）不走 CDN 缓存，避免被 block 的图片被缓存后泄露
+    // 管理端请求（带 ?from=admin）不走 CDN 缓存
     const isAdminRequest = url.searchParams.get('from') === 'admin';
     if (isAdminRequest) {
         headers.set('Cache-Control', 'private, no-store');
@@ -50,12 +50,12 @@ export function setCommonHeaders(headers, encodedFileName, fileType, Referer, ur
     }
     
     // CDN缓存策略
+    // Discord 渠道强制 public 缓存（优先级最高，解决 429 问题）
     if (forcePublicCache) {
-        // Discord 渠道：强制 CDN 缓存 30 天，避免重复请求 Discord API 触发 429
         headers.set('Cache-Control', 'public, max-age=2592000');
     } else if (Referer && Referer.includes(url.origin)) {
-        // 本站访问：私有缓存 1 天，每次都走 Worker 检查权限
-        headers.set('Cache-Control', 'private, max-age=86400');
+        // 本站访问：也用 public 缓存，让公开图库享受 CDN 加速
+        headers.set('Cache-Control', 'public, max-age=2592000');
     } else {
         // 外站引用：CDN 缓存 30 天
         headers.set('Cache-Control', 'public, max-age=2592000');
@@ -125,9 +125,10 @@ export async function returnWithCheck(context, imgRecord) {
 
     const response = new Response('success', { status: 200 });
 
-    // Referer header equal to the dashboard page or upload page
-    if (request.headers.get('Referer') && request.headers.get('Referer').includes(url.origin)) {
-        //show the image
+    // 只有管理端请求（带 ?from=admin）才跳过 block 检查
+    const isAdminRequest = url.searchParams.get('from') === 'admin';
+    if (isAdminRequest && request.headers.get('Referer') && request.headers.get('Referer').includes(url.origin)) {
+        // 管理员从本站访问，跳过 block 检查
         return response;
     }
 
