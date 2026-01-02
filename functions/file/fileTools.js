@@ -31,7 +31,8 @@ export function isDomainAllowed(context) {
 }
 
 // 公共响应头设置函数
-export function setCommonHeaders(headers, encodedFileName, fileType, Referer, url) {
+// forcePublicCache: 强制使用 public 缓存（用于 Discord 渠道，避免 429 速率限制）
+export function setCommonHeaders(headers, encodedFileName, fileType, Referer, url, forcePublicCache = false) {
     headers.set('Content-Disposition', `inline; filename="${encodedFileName}"; filename*=UTF-8''${encodedFileName}`);
     headers.set('Access-Control-Allow-Origin', '*');
     headers.set('Accept-Ranges', 'bytes');
@@ -41,11 +42,16 @@ export function setCommonHeaders(headers, encodedFileName, fileType, Referer, ur
         headers.set('Content-Type', fileType);
     }
     
-    // 根据Referer设置CDN缓存策略
-    if (Referer && Referer.includes(url.origin)) {
-        headers.set('Cache-Control', 'private, max-age=86400'); // 本地缓存 1天
+    // CDN缓存策略
+    if (forcePublicCache) {
+        // Discord 渠道：强制 CDN 缓存 30 天，避免重复请求 Discord API 触发 429
+        headers.set('Cache-Control', 'public, max-age=2592000');
+    } else if (Referer && Referer.includes(url.origin)) {
+        // 本站访问：私有缓存 1 天，每次都走 Worker 检查权限
+        headers.set('Cache-Control', 'private, max-age=86400');
     } else {
-        headers.set('Cache-Control', 'public, max-age=2592000'); // CDN缓存 30天
+        // 外站引用：CDN 缓存 30 天
+        headers.set('Cache-Control', 'public, max-age=2592000');
     }
 }
 

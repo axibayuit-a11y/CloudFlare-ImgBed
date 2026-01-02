@@ -378,9 +378,9 @@ async function handleDiscordChunkedFile(context, imgRecord, encodedFileName, fil
     // 计算文件总大小
     const totalSize = chunks.reduce((total, chunk) => total + (chunk.size || 0), 0);
 
-    // 构建响应头
+    // 构建响应头 - Discord 渠道强制 CDN 缓存，避免 429 速率限制
     const headers = new Headers();
-    setCommonHeaders(headers, encodedFileName, fileType, Referer, url);
+    setCommonHeaders(headers, encodedFileName, fileType, Referer, url, true);
     headers.set('Content-Length', totalSize.toString());
 
     // 添加ETag支持
@@ -484,8 +484,7 @@ async function handleDiscordChunkedFile(context, imgRecord, encodedFileName, fil
                 headers,
             });
         } else {
-            headers.set('Cache-Control', 'private, max-age=86400');
-
+            // Discord 分片文件也使用 CDN 缓存（已在 setCommonHeaders 中设置）
             return new Response(stream, {
                 status: 200,
                 headers,
@@ -708,7 +707,7 @@ async function handleDiscordFile(context, metadata, encodedFileName, fileType) {
         // 处理 HEAD 请求
         if (request.method === 'HEAD') {
             const headers = new Headers();
-            setCommonHeaders(headers, encodedFileName, fileType, Referer, url);
+            setCommonHeaders(headers, encodedFileName, fileType, Referer, url, true); // Discord 强制 CDN 缓存
             return handleHeadRequest(headers);
         }
 
@@ -730,7 +729,7 @@ async function handleDiscordFile(context, metadata, encodedFileName, fileType) {
 
         // 构建响应头
         const headers = new Headers();
-        setCommonHeaders(headers, encodedFileName, fileType, Referer, url);
+        setCommonHeaders(headers, encodedFileName, fileType, Referer, url, true); // Discord 强制 CDN 缓存
 
         // 复制相关头部
         if (response.headers.get('Content-Length')) {
