@@ -32,8 +32,8 @@ Chinese (Simplified/Traditional), English, Japanese, Korean, Spanish, Portuguese
 
 ## Demo
 
-**Demo Site**: [CloudFlare ImgBed](https://cfbed.1314883.xyz/)  
-**Password**: `cfbed`
+**Upload Page**: [https://image.ai6.me/](https://image.ai6.me/)  
+**Public Gallery**: [https://image.ai6.me/browse/1/portrait](https://image.ai6.me/browse/1/portrait)
 
 ![Login Page](static/readme/login.png)
 
