@@ -32,27 +32,8 @@ Chinese (Simplified/Traditional), English, Japanese, Korean, Spanish, Portuguese
 
 ## Demo
 
-**Upload Page**: [https://image.ai6.me/](https://image.ai6.me/)  
-**Public Gallery**: [https://image.ai6.me/browse/1/portrait](https://image.ai6.me/browse/1/portrait)
-
-![Login Page](static/readme/login.png)
-
-![Upload Page](static/readme/upload.png)
-
-<details>
-<summary>More Screenshots</summary>
-
-![Uploading](static/readme/uploading.png)
-
-![Dashboard](static/readme/dashboard.png)
-
-![Custom Config](static/readme/customer-config.png)
-
-![Status Page](static/readme/status-page.png)
-
-![Public Gallery](static/readme/public-gallery.png)
-
-</details>
+- **Upload Page**: https://image.ai6.me/
+- **Public Gallery**: https://image.ai6.me/browse/1/portrait
 
 ## Quick Start
 
