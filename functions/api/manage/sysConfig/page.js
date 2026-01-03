@@ -74,6 +74,13 @@ export async function getPageConfig(db, env) {
             categoryKey: 'pageConfig.globalSettings',
         },
         {
+            id: 'logoLink',
+            labelKey: 'pageConfig.logoLink',
+            placeholder: 'https://github.com/axibayuit-a11y',
+            tooltipKey: 'pageConfig.logoLinkTip',
+            categoryKey: 'pageConfig.globalSettings',
+        },
+        {
             id: 'bkInterval',
             labelKey: 'pageConfig.bkInterval',
             placeholder: '3000',
